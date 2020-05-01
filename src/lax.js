@@ -155,12 +155,13 @@
     }
 
     function fnOrVal(s) {
-      if(s[0] === "(") return eval(s)
+      if(s[0] === "(") return Function(`'use strict'; return (${s})`)()
       else return parseFloat(s)
     }
 
     lax.setup = (o={}) => {
       lax.breakpoints = o.breakpoints || {}
+      lax.breakpointsKeys = Object.keys(lax.breakpoints)
       
       lax.selector = o.selector || '.lax'
       lax.populateElements()
@@ -251,7 +252,7 @@
           if(a.name === "data-lax-anchor") {
             o["data-lax-anchor"] = a.value === "self" ? el : document.querySelector(a.value)
             const rect = o["data-lax-anchor"].getBoundingClientRect()
-            o.anchorTop = Math.floor(rect.top) + window.scrollY
+            o.anchorTop = Math.floor(rect.top) + (window.scrollY || window.pageYOffset)
           } else {
             const tString = a.value
               .replace(/vw/g, window.innerWidth)
@@ -351,7 +352,11 @@
       }
 
       for(let i in transforms) {
-        const transformData = transforms[i][currentBreakpoint] || transforms[i]["default"]
+        let transformData
+        for (let j = lax.breakpointsKeys.indexOf(currentBreakpoint); j >= 0 && !transformData; j--) {
+          transformData = transforms[i][lax.breakpointsKeys[j]]
+        }
+        transformData =  transformData || transforms[i]["default"]
 
         if(!transformData) {
           // console.log(`lax error: there is no setting for key ${i} and screen size ${currentBreakpoint}. Try adding a default value!`)
