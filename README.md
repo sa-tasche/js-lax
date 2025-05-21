@@ -1,3 +1,6 @@
+# Archive Notice
+Due to other commitments I am unable to continue maintaining this project. As far as I know it still works, but there are likely better, more up to date alterantives out there. 
+
 # lax.js
 
 Simple & lightweight (<4kb gzipped) vanilla JavaScript library to create smooth & beautiful animations when you scroll. 
